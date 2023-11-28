@@ -2,5 +2,5 @@ part of 'shared.dart';
 
 class Const {
   static String baseUrl = 'api.rajaongkir.com';
-  static String apiKey = '377722ee3052c8127a216453c2486527';
+  static String apiKey = 'f83cd284a2881d6b2e63fda0585eb986';
 }

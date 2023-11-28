@@ -11,7 +11,7 @@ class Costs extends Equatable {
         service: json['service'] as String?,
         description: json['description'] as String?,
         cost: (json['cost'] as List<dynamic>?)
-            ?.map((e) => Cost.fromJson(e as Map<String, dynamic>))
+            ?.map((e) => Cost.fromJson(e))
             .toList(),
       );
 

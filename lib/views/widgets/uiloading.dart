@@ -13,4 +13,18 @@ class UiLoading {
       ),
     );
   }
+
+
+  static Container loadingSmall(){
+    return Container(
+      alignment: Alignment.center,
+      width: 30,
+      height: 30,
+      color: Colors.transparent,
+      child: const SpinKitFadingCircle(
+        size: 30,
+        color: Color(0xFF00BEFD),
+      ),
+    );
+  }
 }
