@@ -12,7 +12,7 @@ class CardCosts extends StatefulWidget {
 class _CardCostsState extends State<CardCosts> {
   @override
   Widget build(BuildContext context) {
-    Costs c = widget.costs;
+    Costs cost = widget.costs;
     // Cost d = widget.detail;
     return Card(
       color: const Color(0xFFFFFFFF),
@@ -26,25 +26,26 @@ class _CardCostsState extends State<CardCosts> {
         leading: CircleAvatar(
           backgroundImage: AssetImage('assets/images/morales.jpg'),
         ),
-        title: Text(
-          "${c.description} (${c.service})",
+        title:
+            // for(var j in cost ?? [])
+            Text(
+          "${cost.description} (${cost.service})",
           style: TextStyle(
-            color: Colors.black, 
-            fontWeight: FontWeight.bold,
-            fontSize: 16
-            ),
+              color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Biaya: Rp.${c.description },00",
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 12
+            for (var i in cost.cost ?? [])
+              Text(
+                "Biaya: Rp.${i.value},00",
+                style: TextStyle(color: Colors.grey, fontSize: 12),
               ),
-            ),
-            Text("Estimasi Sampai: ${c.description} Hari"),
+            for (var i in cost.cost ?? [])
+              Text(
+                "Estimasi Sampai: ${i.etd} Hari",
+                style: TextStyle(color: Colors.green),
+              ),
           ],
         ),
       ),

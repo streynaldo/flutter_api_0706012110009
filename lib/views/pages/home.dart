@@ -26,7 +26,6 @@ class _HomePageState extends State<HomePage> {
   dynamic selectedCourier;
   dynamic weight;
   dynamic calculatedCosts;
-  dynamic calculatedCost;
   dynamic dataLength;
 
   TextEditingController weightTextController = TextEditingController();
@@ -42,8 +41,6 @@ class _HomePageState extends State<HomePage> {
     return prov;
   }
 
-  
-
   Future<List<City>> getCities(var provId) async {
     dynamic city;
     await MasterDataService.getCity(provId).then((value) {
@@ -54,17 +51,26 @@ class _HomePageState extends State<HomePage> {
     return city;
   }
 
-  Future<List<Costs>> getCosts(var originId, var destinationId, var weight, var courier) async {
-    dynamic costs;
-    await MasterDataService.getCosts(originId, destinationId, weight, courier).then((value) {
+  Future<List<Costs>> getCosts(
+      var originId, var destinationId, var weight, var courier) async {
+    try {
+      List<Costs> costs = await MasterDataService.getCosts(
+        originId,
+        destinationId,
+        weight,
+        courier,
+      );
+
       setState(() {
-        costs = value;
         dataLength = costs.length;
-        // print(costs);
       });
-    });
-    print(costs);
-    return costs;
+      print(costs);
+      return costs;
+    } catch (error) {
+      // Handle error, misalnya dengan menampilkan pesan atau melakukan logging
+      print('Error fetching costs: $error');
+      return []; // Atau return nilai default jika terjadi error
+    }
   }
 
   @override
@@ -92,17 +98,21 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text("Home Page"),
+        title: Text(
+          "Hitung Ongkir",
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
+        backgroundColor: Colors.lightBlue,
       ),
       body: Stack(
         children: [
           Column(
             children: [
               Flexible(
-                flex: 1,
+                flex: 2,
                 child: Container(
-                  margin: EdgeInsets.all(20),
+                  margin: const EdgeInsets.all(20),
                   width: double.infinity,
                   height: double.infinity,
                   child: Column(
@@ -370,24 +380,24 @@ class _HomePageState extends State<HomePage> {
                             child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.lightBlue,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0))
-                                    ),
-                                onPressed: () {
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0))),
+                                onPressed: () async {
                                   setState(() {
-                                    // weight = weightTextController.text;
                                     dataReady = true;
-                                    calculatedCosts = getCosts(selectedCityOrigin.cityId, selectedCityDestination.cityId, weightTextController.text, selectedCourier);
-                                    // calculatedCost = getCost(selectedCityOrigin.cityId, selectedCityDestination.cityId, weightTextController.text, selectedCourier);
-                                    
-                                    // print(calculatedCost);
-                                    // costsData = calculatedCost;
+                                    isLoading = true;
                                   });
+                                  calculatedCosts = await getCosts(
+                                      selectedCityOrigin.cityId,
+                                      selectedCityDestination.cityId,
+                                      weightTextController.text,
+                                      selectedCourier);
+                                  isLoading = false;
                                 },
                                 child: Text(
                                   "Hitung Estimasi Harga",
-                                  style: TextStyle(
-                                    color: Colors.white
-                                  ),
+                                  style: TextStyle(color: Colors.white),
                                 )),
                           )
                         ],
@@ -397,22 +407,21 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Flexible(
-                flex: 1,
-                child: Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: !dataReady
-                      ? const Align(
-                          alignment: Alignment.center,
-                          child: Text("Data tidak ditemukan"),
-                        )
-                      : ListView.builder(
-                          itemCount: dataLength,
-                          itemBuilder: (context, index) {
-                            return CardCosts(calculatedCost);
-                          },
-                  )
-                ),
+                flex: 2,
+                child: SizedBox(
+                    width: double.infinity,
+                    height: double.infinity,
+                    child: !dataReady
+                        ? const Align(
+                            alignment: Alignment.center,
+                            child: Text("Data tidak ditemukan"),
+                          )
+                        : ListView.builder(
+                            itemCount: dataLength,
+                            itemBuilder: (context, index) {
+                              return CardCosts(calculatedCosts[index]);
+                            },
+                          )),
               ),
             ],
           ),

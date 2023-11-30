@@ -64,7 +64,7 @@ class MasterDataService {
     );
 
     var job = json.decode(response.body);
-    print(job.toString());
+    // print(job.toString());
     // List<Map<String, dynamic>> costs = job['rajaongkir']['results']['costs'];
     // print(costs);
 
@@ -72,7 +72,7 @@ class MasterDataService {
     // List<Cost> result2 = [];
     // List akhir = [result, result2];
     if (response.statusCode == 200) {
-      result = (job['rajaongkir']['results'][0]['costs'] as List<dynamic>)
+      return (job['rajaongkir']['results'][0]['costs'] as List)
           .map((e) => Costs.fromJson(e))
           .toList();
       // result2 = (job['rajaongkir']['results'][0]['costs'][0]['cost'] as List<dynamic>)
