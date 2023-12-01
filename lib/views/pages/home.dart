@@ -415,12 +415,17 @@ class _HomePageState extends State<HomePage> {
                                     // dataReady = true;
                                     isLoading = true;
                                   });
-                                  calculatedCosts = await getCosts(
-                                      selectedCityOrigin.cityId,
-                                      selectedCityDestination.cityId,
-                                      weightTextController.text,
-                                      selectedCourier);
-                                  isLoading = false;
+                                  List<Costs> updatedCosts = await getCosts(
+                                    selectedCityOrigin.cityId,
+                                    selectedCityDestination.cityId,
+                                    weightTextController.text,
+                                    selectedCourier,
+                                  );
+
+                                  setState(() {
+                                    calculatedCosts = updatedCosts;
+                                    isLoading = false;
+                                  });
                                 },
                                 child: Text(
                                   "Hitung Estimasi Harga",
