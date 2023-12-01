@@ -8,7 +8,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Costs> costsData = [];
+  List<Costs> calculatedCosts = [];
   bool dataReady = false;
   bool isFirstLoad = true;
   bool isLoading = false;
@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   dynamic selectedCityDestination;
   dynamic selectedCourier;
   dynamic weight;
-  dynamic calculatedCosts;
+  // dynamic calculatedCosts;
   dynamic dataLength;
 
   TextEditingController weightTextController = TextEditingController();
@@ -60,11 +60,7 @@ class _HomePageState extends State<HomePage> {
         weight,
         courier,
       );
-
-      setState(() {
-        dataLength = costs.length;
-      });
-      print(costs);
+      // print(costs);
       return costs;
     } catch (error) {
       // Handle error, misalnya dengan menampilkan pesan atau melakukan logging
@@ -108,11 +104,13 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
         children: [
           Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Flexible(
                 flex: 2,
+                fit: FlexFit.loose,
                 child: Container(
-                  margin: const EdgeInsets.all(20),
+                  margin: const EdgeInsets.fromLTRB(20, 20, 20, 5),
                   width: double.infinity,
                   height: double.infinity,
                   child: Column(
@@ -260,7 +258,21 @@ class _HomePageState extends State<HomePage> {
                                 } else if (snapshot.hasError) {
                                   return Text("Tidak ada data");
                                 }
-                                return UiLoading.loadingSmall();
+                                return DropdownButton(
+                                  isExpanded: true,
+                                  value: selectedCityOrigin,
+                                  icon: Icon(Icons.arrow_drop_down),
+                                  iconSize: 30,
+                                  elevation: 4,
+                                  style: TextStyle(color: Colors.black),
+                                  items: [],
+                                  onChanged: (value) {
+                                    Null;
+                                  },
+                                  isDense: false,
+                                  hint: Text('Select an item'),
+                                  disabledHint: Text('Pilih kota'),
+                                );
                               },
                             ),
                           ),
@@ -365,12 +377,27 @@ class _HomePageState extends State<HomePage> {
                                 } else if (snapshot.hasError) {
                                   return Text("Tidak ada data");
                                 }
-                                return UiLoading.loadingSmall();
+                                return DropdownButton(
+                                  isExpanded: true,
+                                  value: selectedCityDestination,
+                                  icon: Icon(Icons.arrow_drop_down),
+                                  iconSize: 30,
+                                  elevation: 4,
+                                  style: TextStyle(color: Colors.black),
+                                  items: [],
+                                  onChanged: (value) {
+                                    Null;
+                                  },
+                                  isDense: false,
+                                  hint: Text('Select an item'),
+                                  disabledHint: Text('Pilih kota'),
+                                );
                               },
                             ),
                           ),
                         ],
                       ),
+                      Spacer(flex: 1),
                       // End Row DESTINATION
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -385,7 +412,7 @@ class _HomePageState extends State<HomePage> {
                                             BorderRadius.circular(10.0))),
                                 onPressed: () async {
                                   setState(() {
-                                    dataReady = true;
+                                    // dataReady = true;
                                     isLoading = true;
                                   });
                                   calculatedCosts = await getCosts(
@@ -407,17 +434,17 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Flexible(
-                flex: 2,
+                flex: 3,
                 child: SizedBox(
                     width: double.infinity,
                     height: double.infinity,
-                    child: !dataReady
+                    child: calculatedCosts.isEmpty
                         ? const Align(
                             alignment: Alignment.center,
                             child: Text("Data tidak ditemukan"),
                           )
                         : ListView.builder(
-                            itemCount: dataLength,
+                            itemCount: calculatedCosts.length,
                             itemBuilder: (context, index) {
                               return CardCosts(calculatedCosts[index]);
                             },
